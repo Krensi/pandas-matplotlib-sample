@@ -1,14 +1,16 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+
+import clustered_plot
 
 
-"""
-Load samples from xslx file from different sheets
-
-Sheet data can be suffixed with extra string to avoid name collision
-if column names are the same in both sheet (see `suffixes`)
-"""
 def load_sample_data(file_path="samples.xlsx"):
+    """
+    Load samples from xslx file from different sheets
+
+    Sheet data can be suffixed with extra string to avoid name collision
+    if column names are the same in both sheet (see `suffixes`)"""
     try:
         # Read data from two different sheets
         df_sheet_one = pd.read_excel(file_path, sheet_name=0)
@@ -39,17 +41,54 @@ def load_sample_average_deviation(file_path="samples.xlsx"):
         return None
 
 
-"""
-Print stacked bar chart with error bars
+def plot_grouped_temperatures(
+    x_axis_data: list[float],
+    y_axis_data: tuple[list[float], list[float]],
+    y_axis_error_data: tuple[list[float], list[float]],
+):
+    """
+    Print grouped bar
+    https://www.pythoncharts.com/matplotlib/grouped-bar-charts-matplotlib/"""
+    species = ("Adelie", "Chinstrap", "Gentoo")
+    penguin_means = {
+        "Bill Depth": (18.35, 18.43, 14.98),
+        "Bill Length": (38.79, 48.83, 47.50),
+        "Flipper Length": (189.95, 195.82, 217.19),
+    }
 
-Example with stacked bars which was used as inspiration
-https://www.w3resource.com/graphics/matplotlib/barchart/matplotlib-barchart-exercise-14.php
-"""
+    x = np.arange(len(species))  # the label locations
+    width = 0.25  # the width of the bars
+    multiplier = 0
+
+    fig, ax = plt.subplots(layout="constrained")
+
+    for attribute, measurement in penguin_means.items():
+        offset = width * multiplier
+        rects = ax.bar(x + offset, measurement, width, label=attribute)
+        ax.bar_label(rects, padding=3)
+        multiplier += 1
+
+    # Add some text for labels, title and custom x-axis tick labels, etc.
+    ax.set_ylabel("Length (mm)")
+    ax.set_title("Penguin attributes by species")
+    ax.set_xticks(x + width, species)
+    ax.legend(loc="upper left", ncols=3)
+    ax.set_ylim(0, 250)
+
+    plt.show()
+
+
 def plot_stacked_temperatures_with_error_bars(
     x_axis_data: list[float],
     y_axis_data: tuple[list[float], list[float]],
     y_axis_error_data: tuple[list[float], list[float]],
 ):
+    """
+    Print stacked bar chart with error bars
+
+    Example with stacked bars which was used as inspiration
+    https://www.w3resource.com/graphics/matplotlib/barchart/matplotlib-barchart-exercise-14.php"""
+
     # This code of course can be put into a loop to stack an arbitrary number of values
     def create_bar_plot(ax, x, y, yerr, bottom, label, color):
         # Create the bars only in a plot
@@ -121,17 +160,16 @@ def plot_stacked_temperatures_with_error_bars(
     return [fig, ax]
 
 
-"""
-Print bar chart with error bars
-
-Example with clustered:
-https://stackoverflow.com/questions/45752981/removing-the-bottom-error-caps-only-on-matplotlib
-"""
 def plot_temperatures_with_error_bars(
     x_axis_data: list[float],
     y_axis_data: list[float],
     y_axis_error_data: list[float],
 ):
+    """
+    Print bar chart with error bars
+
+    Example with clustered:
+    https://stackoverflow.com/questions/45752981/removing-the-bottom-error-caps-only-on-matplotlib"""
     fig, ax = plt.subplots()
 
     # Create the bars only in a plot
@@ -172,8 +210,16 @@ def plot_temperatures_with_error_bars(
 
 
 if __name__ == "__main__":
+    plot = clustered_plot.ClusteredPlot("test", "ytext", "xtest", ["one", "two"])
+    plot.add_subgroup_with_data("one", "subone", [1, 2])
+    plot.add_subgroup_with_data("one", "subone", [3, 4])
+    plot.add_subgroup_with_data("one", "subtwo", [5, 6])
+    plot.add_subgroup_with_data("two", "subtwo", [5, 6])
+
     df = load_sample_data()
     pass
+    plot_grouped_temperatures(None, None, None)
+
     plot_temperatures_with_error_bars(
         x_axis_data=df["Hour"],
         y_axis_data=df["Average_one"],
