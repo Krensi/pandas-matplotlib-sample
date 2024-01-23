@@ -210,11 +210,12 @@ def plot_temperatures_with_error_bars(
 
 
 if __name__ == "__main__":
-    plot = clustered_plot.ClusteredPlot("test", "ytext", "xtest", ["one", "two"])
-    plot.add_subgroup_with_data("one", "subone", [1, 2])
-    plot.add_subgroup_with_data("one", "subone", [3, 4])
-    plot.add_subgroup_with_data("one", "subtwo", [5, 6])
-    plot.add_subgroup_with_data("two", "subtwo", [5, 6])
+    plot = clustered_plot.ClusteredPlot("test", "xtext", "ytest", ["one", "two"], ["subone", "subtwo"])
+    plot.add_subgroup_with_data("one", "subone", [1.1, 1.2], [0.1, 0.2], ["a-mit-mark", "a-ohne-mark"])
+    plot.add_subgroup_with_data("one", "subtwo", [3.2, 3.3], [0.3, 0.4], ["b-mit-mark", "b-ohne-mark"])
+    plot.add_subgroup_with_data("two", "subone", [5.4, 5.5], [0.5, 0.6], ["a-mit-mark", "a-ohne-mark"])
+    plot.add_subgroup_with_data("two", "subtwo", [7.7, 7.8], [0.7, 0.8], ["b-mit-mark", "b-ohne-mark"])
+    plot.create_plot()
 
     df = load_sample_data()
     pass
